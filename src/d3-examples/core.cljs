@@ -159,9 +159,9 @@
 
 (def rects-61 (-> svg-61
                   (.selectAll "rect")))
-(defn render-61
-  [data color]
-  (-> svg-61
+(defn render!
+  [svg data color]
+  (-> svg
       (.selectAll "rect")
       (.data data)
       (.enter)
@@ -172,5 +172,14 @@
       (.attr "height" 20)
       (.attr "fill" color)))
 
-(render-61 #js [1 2 3] "red")
-(render-61 #js [1 2 3 4 5] "blue")
+(render! svg-61 #js [1 2 3] "red")
+(render! svg-61 #js [1 2 3 4 5] "blue")
+
+; Example 62
+; changing the data isn't reflected either
+(def svg-62 (create-svg! "div#ex-62"))
+
+(def rects-62 (-> svg-62
+                  (.selectAll "rect")))
+(render! svg-62 #js [1 2 2.5] "red")
+(render! svg-62 #js [1 2 3 4 5] "blue")
