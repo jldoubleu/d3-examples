@@ -128,3 +128,21 @@
     (.attr "width" 20)
     (.attr "height" 20))
 
+; Example 60
+; Example 60 is doing the same thing as before but keeping a reference to the 
+; rectangles.
+(def svg-60 (-> js/d3
+                (.select "div#ex-60")
+                (.append "svg")
+                (.attr "width" 250)
+                (.attr "height" 250)))
+(def rects-60 (-> svg-60
+                  (.selectAll "rect")))
+(-> rects-60
+    (.data data-58)
+    (.enter)
+    (.append "rect")
+    (.attr "x" scale-58)
+    (.attr "y" 50)
+    (.attr "width" 20)
+    (.attr "height" 20))
