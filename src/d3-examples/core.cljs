@@ -131,11 +131,16 @@
 ; Example 60
 ; Example 60 is doing the same thing as before but keeping a reference to the 
 ; rectangles.
-(def svg-60 (-> js/d3
-                (.select "div#ex-60")
-                (.append "svg")
-                (.attr "width" 250)
-                (.attr "height" 250)))
+(defn create-svg!
+  [parent-selctor]
+  (-> js/d3
+      (.select parent-selctor)
+      (.append "svg")
+      (.attr "width" 250)
+      (.attr "height" 250)))
+
+(def svg-60 (create-svg! "div#ex-60"))
+
 (def rects-60 (-> svg-60
                   (.selectAll "rect")))
 (-> rects-60
@@ -146,3 +151,26 @@
     (.attr "y" 50)
     (.attr "width" 20)
     (.attr "height" 20))
+
+; Example 61
+; How updating does not work.
+; Range and Domain are still the same
+(def svg-61 (create-svg! "div#ex-61"))
+
+(def rects-61 (-> svg-61
+                  (.selectAll "rect")))
+(defn render-61
+  [data color]
+  (-> svg-61
+      (.selectAll "rect")
+      (.data data)
+      (.enter)
+      (.append "rect")
+      (.attr "x" scale-58)
+      (.attr "y" 50)
+      (.attr "width" 20)
+      (.attr "height" 20)
+      (.attr "fill" color)))
+
+(render-61 #js [1 2 3] "red")
+(render-61 #js [1 2 3 4 5] "blue")
