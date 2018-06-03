@@ -112,4 +112,19 @@
     (.attr "width" 20)
     (.attr "height" 20))
     
+; Example 59
+; ok... this was obvious the anonymous function wrapping scale is unnecessary
+(-> js/d3
+    (.select "div#ex-59")
+    (.append "svg")
+    (.attr "width" 250)
+    (.attr "height" 250)
+    (.selectAll "rect")
+    (.data data-58)
+    (.enter)
+    (.append "rect")
+    (.attr "x" scale-58)
+    (.attr "y" 50)
+    (.attr "width" 20)
+    (.attr "height" 20))
 
