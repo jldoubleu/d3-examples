@@ -86,3 +86,30 @@
     (.attr "y" 50)
     (.attr "width" 20)
     (.attr "height" 20))
+
+; Example 57
+; Skipped. Covered with threading macro
+
+; Example 58
+; First instance of selectAll/Enter paradigm
+(def data-58 #js [1, 2, 3, 4, 5])
+(def scale-58 (-> js/d3
+                  (.scaleLinear)
+                  (.domain #js [1 5])
+                  (.range #js [0 200])))
+
+(-> js/d3
+    (.select "div#ex-58")
+    (.append "svg")
+    (.attr "width" 250)
+    (.attr "height" 250)
+    (.selectAll "rect")
+    (.data data-58)
+    (.enter)
+    (.append "rect")
+    (.attr "x" #(scale-58 %1))
+    (.attr "y" 50)
+    (.attr "width" 20)
+    (.attr "height" 20))
+    
+
