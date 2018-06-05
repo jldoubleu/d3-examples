@@ -181,5 +181,30 @@
 
 (def rects-62 (-> svg-62
                   (.selectAll "rect")))
+
 (render! svg-62 #js [1 2 2.5] "red")
 (render! svg-62 #js [1 2 3 4 5] "blue")
+
+; Example 63
+; The right way, finally
+(defn render-right!
+  [svg data color]
+  (let [rects (-> svg
+                  (.selectAll "rect") 
+                  (.data data))]
+    (do
+      (-> rects
+          (.enter)
+          (.append "rect"))
+      (-> rects
+          (.attr "x" scale-58)
+          (.attr "y" 50)
+          (.attr "width" 20)
+          (.attr "height" 20)
+          (.attr "fill" color)))))
+
+(def svg-63 (create-svg! "div#ex-63"))
+
+(render-right! svg-63 #js [1 2 3 4 5] "blue")
+(render-right! svg-63 #js [1 2 3] "red")
+
