@@ -192,19 +192,18 @@
   (let [rects (-> svg
                   (.selectAll "rect") 
                   (.data data))]
-    (do
-      (-> rects
-          (.enter)
-          (.append "rect"))
-      (-> rects
-          (.attr "x" scale-58)
-          (.attr "y" 50)
+    (-> rects
+        (.enter)
+        (.append "rect")
           (.attr "width" 20)
           (.attr "height" 20)
-          (.attr "fill" color)))))
+        (.merge rects)
+        (.attr "x" scale-58)
+        (.attr "y" 50)
+        (.attr "fill" color))))
 
 (def svg-63 (create-svg! "div#ex-63"))
 
+(render-right! svg-63 #js [1 2 2.5] "red")
 (render-right! svg-63 #js [1 2 3 4 5] "blue")
-(render-right! svg-63 #js [1 2 3] "red")
 
