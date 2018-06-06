@@ -274,3 +274,34 @@
 (js/setTimeout #(render-rightest! svg-67 #js [1 2] "green") 3000)
 (js/setTimeout #(render-rightest! svg-67 #js [3 4 5] "cyan") 4000)
 (js/setTimeout #(render-rightest! svg-67 #js [3 4] "magenta") 5000)
+
+; Example 68
+; Circles have different properties than rects
+
+(defn render-circle
+  [svg data]
+  (let [circles (-> svg
+                    (.selectAll "circle")
+                    (.data (clj->js data)))]
+    (do
+      (-> circles
+          (.enter)
+            (.append "circle")
+            (.attr "r" 10)
+          (.merge circles)
+            (.attr "cx" #(.-x %1))  ; javascript interop property access
+            (.attr "cy" #(.-y %1)))
+      (-> circles
+          (.exit)
+            (.remove)))))
+
+(def data-68 [
+  {:x 100 :y 100}
+  {:x 130 :y 120}
+  {:x 80  :y 180}
+  {:x 180 :y 80}
+  {:x 180 :y 40}])
+
+(def svg-68 (create-svg! "div#ex-68"))
+
+(render-circle svg-68 data-68)
