@@ -263,3 +263,14 @@
 (render-rightest! svg-66 #js [1 2 2.5] "red")
 (render-rightest! svg-66 #js [1 2 3 4 5] "blue")
 (render-rightest! svg-66 #js [1 2] "green")
+
+; Example 67
+; Using delay to show the steps
+
+(def svg-67 (create-svg! "div#ex-67"))
+
+(js/setTimeout #(render-rightest! svg-67 #js [1 2 2.5] "red") 1000)
+(js/setTimeout #(render-rightest! svg-67 #js [1 2 3 4 5] "blue") 2000)
+(js/setTimeout #(render-rightest! svg-67 #js [1 2] "green") 3000)
+(js/setTimeout #(render-rightest! svg-67 #js [3 4 5] "cyan") 4000)
+(js/setTimeout #(render-rightest! svg-67 #js [3 4] "magenta") 5000)
