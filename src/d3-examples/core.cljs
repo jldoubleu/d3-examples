@@ -207,3 +207,24 @@
 (render-right! svg-63 #js [1 2 2.5] "red")
 (render-right! svg-63 #js [1 2 3 4 5] "blue")
 
+; Example 64
+; Use append for all the stuff that doesn't change
+(def svg-64 (create-svg! "div#ex-64"))
+
+(defn render-righter!
+  [svg data color]
+  (let [rects (-> svg
+                  (.selectAll "rect") 
+                  (.data data))]
+    (-> rects
+        (.enter)
+        (.append "rect")
+          (.attr "y" 50)
+          (.attr "width" 20)
+          (.attr "height" 20)
+        (.merge rects)
+        (.attr "x" scale-58)
+        (.attr "fill" color))))
+  
+(render-righter! svg-64 #js [1 2 2.5] "red")
+(render-righter! svg-64 #js [1 2 3 4 5] "blue")
