@@ -228,3 +228,11 @@
   
 (render-righter! svg-64 #js [1 2 2.5] "red")
 (render-righter! svg-64 #js [1 2 3 4 5] "blue")
+
+; Example 65
+; Actually it still isn't right.  Elements are not deleted.
+(def svg-65 (create-svg! "div#ex-65"))
+  
+(render-right! svg-65 #js [1 2 2.5] "red")
+(render-right! svg-65 #js [1 2 3 4 5] "blue")
+(render-right! svg-65 #js [1 2] "green")
