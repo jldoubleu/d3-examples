@@ -233,6 +233,33 @@
 ; Actually it still isn't right.  Elements are not deleted.
 (def svg-65 (create-svg! "div#ex-65"))
   
-(render-right! svg-65 #js [1 2 2.5] "red")
-(render-right! svg-65 #js [1 2 3 4 5] "blue")
-(render-right! svg-65 #js [1 2] "green")
+(render-righter! svg-65 #js [1 2 2.5] "red")
+(render-righter! svg-65 #js [1 2 3 4 5] "blue")
+(render-righter! svg-65 #js [1 2] "green")
+
+; Example 66
+; Finally the complete add, update, remove cycle
+(defn render-rightest!
+  [svg data color]
+  (let [rects (-> svg
+                  (.selectAll "rect") 
+                  (.data data))]
+    (do 
+      (-> rects
+          (.enter)
+            (.append "rect")
+            (.attr "y" 50)
+            (.attr "width" 20)
+            (.attr "height" 20) 
+          (.merge rects)
+            (.attr "x" scale-58)
+            (.attr "fill" color))
+      (-> rects
+          (.exit)
+          (.remove)))))
+
+(def svg-66 (create-svg! "div#ex-66"))
+  
+(render-rightest! svg-66 #js [1 2 2.5] "red")
+(render-rightest! svg-66 #js [1 2 3 4 5] "blue")
+(render-rightest! svg-66 #js [1 2] "green")
