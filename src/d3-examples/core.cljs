@@ -313,7 +313,7 @@
 (-> js/d3
     (.csv "data.csv" type-func #(render-circle svg-69 %1)))
 
-; Example 70-77
+; Example 70-78
 ; Skipped a few boring items. Scatter plot of iris information
 ; The lesson here for me is to remember that the js stuff is not
 ; necessarily immutable I think. I had a problem for a while 
