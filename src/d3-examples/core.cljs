@@ -313,7 +313,7 @@
 (-> js/d3
     (.csv "data.csv" type-func #(render-circle svg-69 %1)))
 
-; Example 73
+; Example 70-74
 ; Skipped a few boring items. Scatter plot of iris information
 ; The lesson here for me is to remember that the js stuff is not
 ; necessarily immutable I think. I had a problem for a while 
@@ -326,7 +326,7 @@
                       (.range #js [0 250])))
 (def iris-range-y (-> js/d3
                       (.scaleLinear)
-                      (.range #js [0 250])))
+                      (.range #js [250 0])))
 
 (def iris-svg (create-svg! "div#ex-70"))
 
