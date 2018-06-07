@@ -323,6 +323,8 @@
 (def iris-outer-width 300)
 (def iris-outer-height 250)
 (def iris-radius 5)
+(def iris-column-prop "petal_length")
+(def iris-row-prop    "sepal_length")
 
 (def iris-range-x (-> js/d3
                       (.scaleLinear)
@@ -337,18 +339,18 @@
   [datum]
   (let [clj-datum (js->clj datum)]
     (-> clj-datum
-        (update "sepal_length" js/parseFloat)
+        (update iris-row-prop js/parseFloat)
         (update "sepal_width" js/parseFloat)
-        (update "petal_length" js/parseFloat)
+        (update iris-column-prop js/parseFloat)
         (update "petal_width" js/parseFloat)
         (clj->js))))
 
 (defn render-70
   [svg data]
   (let [x-domain (-> iris-range-x 
-                     (.domain (.extent js/d3 data #(.-sepal_length %1))))
+                     (.domain (.extent js/d3 data #(aget %1 iris-row-prop))))
         y-domain (-> iris-range-y 
-                     (.domain (.extent js/d3 data #(.-petal_length %1))))
+                     (.domain (.extent js/d3 data #(aget %1 iris-column-prop))))
         circles  (-> svg
                     (.selectAll "circle")
                     (.data data))]
