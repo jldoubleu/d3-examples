@@ -282,7 +282,7 @@
   [svg data]
   (let [circles (-> svg
                     (.selectAll "circle")
-                    (.data (clj->js data)))]
+                    (.data data))]
     (do
       (-> circles
           (.enter)
@@ -304,4 +304,11 @@
 
 (def svg-68 (create-svg! "div#ex-68"))
 
-(render-circle svg-68 data-68)
+(render-circle svg-68 (clj->js data-68))
+
+; Example 69
+; Loading circles from a file
+
+(def svg-69 (create-svg! "div#ex-69"))
+(-> js/d3
+    (.csv "data.csv" type-func #(render-circle svg-69 %1)))
