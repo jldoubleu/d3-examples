@@ -313,7 +313,7 @@
 (-> js/d3
     (.csv "data.csv" type-func #(render-circle svg-69 %1)))
 
-; Example 70-75
+; Example 70-77
 ; Skipped a few boring items. Scatter plot of iris information
 ; The lesson here for me is to remember that the js stuff is not
 ; necessarily immutable I think. I had a problem for a while 
@@ -322,9 +322,11 @@
 
 (def iris-outer-width 300)
 (def iris-outer-height 250)
-(def iris-radius 5)
+(def iris-radius-min 5)
+(def iris-radius-max 20)
 (def iris-column-prop "petal_length")
 (def iris-row-prop    "sepal_length")
+(def iris-radius-prop "sepal_width")
 
 (def iris-range-x (-> js/d3
                       (.scaleLinear)
@@ -333,6 +335,10 @@
                       (.scaleLinear)
                       (.range #js [iris-outer-height 0])))
 
+(def iris-range-r (-> js/d3
+                      (.scaleLinear)
+                      (.range #js [iris-radius-min iris-radius-max])))
+
 (def iris-svg (create-svg! "div#ex-70"))
 
 (defn iris-type-func 
@@ -340,7 +346,7 @@
   (let [clj-datum (js->clj datum)]
     (-> clj-datum
         (update iris-row-prop js/parseFloat)
-        (update "sepal_width" js/parseFloat)
+        (update iris-radius-prop js/parseFloat)
         (update iris-column-prop js/parseFloat)
         (update "petal_width" js/parseFloat)
         (clj->js))))
@@ -351,6 +357,8 @@
                      (.domain (.extent js/d3 data #(aget %1 iris-row-prop))))
         y-domain (-> iris-range-y 
                      (.domain (.extent js/d3 data #(aget %1 iris-column-prop))))
+        r-domain (-> iris-range-r 
+                     (.domain (.extent js/d3 data #(aget %1 iris-radius-prop))))
         circles  (-> svg
                     (.selectAll "circle")
                     (.data data))]
@@ -358,10 +366,10 @@
             (.enter)
               (.append "circle")
               (.attr "class" "testing")
-              (.attr "r" iris-radius) 
             (.merge circles)
-              (.attr "cx" #(x-domain (.-sepal_length %1)))
-              (.attr "cy" #(y-domain (.-petal_length %1))))
+              (.attr "cx" #(x-domain (aget %1 iris-row-prop)))
+              (.attr "cy" #(y-domain (aget %1 iris-column-prop)))
+              (.attr "r" #(r-domain (aget %1 iris-radius-prop))))
         (-> circles
             (.exit)
             (.remove))))
