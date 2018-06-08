@@ -313,12 +313,12 @@
 (-> js/d3
     (.csv "data.csv" type-func #(render-circle svg-69 %1)))
 
-; Example 70-79
+; Example 70-81
 ; Skipped a few boring items. Scatter plot of iris information
 ; The lesson here for me is to remember that the js stuff is not
 ; necessarily immutable I think. I had a problem for a while 
 ; that seemed to have been caused by reusing the same linear
-; scale for the x and y range/domains
+; scale for the x and y range/domains. 
 
 (def iris-outer-width 300)
 (def iris-outer-height 250)
@@ -327,6 +327,7 @@
 (def iris-column-prop "petal_length")
 (def iris-row-prop    "sepal_length")
 (def iris-radius-prop "sepal_width")
+(def iris-color-prop  "species")
 
 (def iris-range-x (-> js/d3
                       (.scaleLinear)
@@ -338,6 +339,10 @@
 (def iris-range-r (-> js/d3
                       (.scaleLinear)
                       (.range #js [iris-radius-min iris-radius-max])))
+
+(def iris-range-c (-> js/d3
+                      (.scaleOrdinal)
+                      (.range (.-schemeCategory10 js/d3))))
 
 (def iris-svg (create-svg! "div#ex-70"))
 
@@ -367,6 +372,7 @@
               (.append "circle")
               (.attr "class" "testing")
             (.merge circles)
+              (.attr "stroke" #(iris-range-c (aget %1 iris-color-prop)))
               (.attr "cx" #(x-domain (aget %1 iris-row-prop)))
               (.attr "cy" #(y-domain (aget %1 iris-column-prop)))
               (.attr "r" #(r-domain (aget %1 iris-radius-prop))))
