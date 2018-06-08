@@ -386,6 +386,8 @@
 
 ; Example 82
 ; Graphing data. Doesn't look great as linear scale what to do?
+; The trend in the data is easier to see if we swap to a log
+; scale for both x and y.
 
 (def gdp-width  300)
 (def gdp-height 250)
@@ -396,10 +398,10 @@
 (def gdp-svg (create-svg! "div#ex-82"))
 
 (def gdp-x-scale (-> js/d3
-                     (.scaleLinear)
+                     (.scaleLog)
                      (.range #js [0 gdp-width])))
 (def gdp-y-scale (-> js/d3
-                     (.scaleLinear)
+                     (.scaleLog)
                      (.range #js [gdp-height 0])))
 
 (defn gdp-type-func
