@@ -391,6 +391,10 @@
 ; Example 84
 ; Showing population as radius of circle scaled linearly results
 ; in lots of tiny circles and a few large circles.
+; Example 85
+; Using a log scale for the radius results in a clearer trend.
+; it is still a little odd that the pixels in different circles
+; count for a different number of people
 
 (def gdp-width  300)
 (def gdp-height 250)
@@ -409,7 +413,7 @@
                      (.scaleLog)
                      (.range #js [gdp-height 0])))
 (def gdp-r-scale (-> js/d3
-                     (.scaleLinear)
+                     (.scaleLog)
                      (.range #js [gdp-r-min gdp-r-max])))
 
 (defn gdp-type-func
