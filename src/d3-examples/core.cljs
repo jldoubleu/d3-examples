@@ -382,3 +382,54 @@
 
 (-> js/d3
     (.csv "iris.csv" iris-type-func #(render-70 iris-svg %1)))
+
+
+; Example 82
+; Graphing data. Doesn't look great as linear scale what to do?
+
+(def gdp-width  300)
+(def gdp-height 250)
+(def gdp-radius 2)
+(def gdp-x-col  "population")
+(def gdp-y-col  "gdp")
+
+(def gdp-svg (create-svg! "div#ex-82"))
+
+(def gdp-x-scale (-> js/d3
+                     (.scaleLinear)
+                     (.range #js [0 gdp-width])))
+(def gdp-y-scale (-> js/d3
+                     (.scaleLinear)
+                     (.range #js [gdp-height 0])))
+
+(defn gdp-type-func
+  [datum]
+  (let [clj-datum (js->clj datum)]
+    (-> clj-datum
+        (update gdp-x-col js/parseFloat)
+        (update gdp-y-col js/parseFloat)
+        (clj->js))))
+
+(defn render-gdp
+  [data]
+  (let [gdp-x-domain (-> gdp-x-scale
+                         (.domain (.extent js/d3 data #(aget %1 gdp-x-col))))
+        gdp-y-domain (-> gdp-y-scale
+                         (.domain (.extent js/d3 data #(aget %1 gdp-y-col))))
+        circles  (-> gdp-svg
+                    (.selectAll "circle")
+                    (.data data))]
+    (-> circles
+        (.enter)
+          (.append "circle")
+          (.attr "r" gdp-radius)
+          (.attr "fill" "black")
+        (.merge circles)
+          (.attr "cx" #(gdp-x-domain (aget %1 gdp-x-col)))
+          (.attr "cy" #(gdp-y-domain (aget %1 gdp-y-col)))
+    (-> circles
+        (.exit)
+        (.remove)))))
+
+(-> js/d3
+    (.csv "countries_population_GDP.csv" gdp-type-func render-gdp))
