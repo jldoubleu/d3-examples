@@ -448,7 +448,6 @@
         circles  (-> gdp-g
                     (.selectAll "circle")
                     (.data data))]
-    (prn "foo" gdp-r-max)
     (.range gdp-r-scale #js [gdp-r-min gdp-r-max])
     (-> circles
         (.enter)
@@ -457,10 +456,10 @@
         (.merge circles)
           (.attr "r" #(gdp-r-domain (aget %1 gdp-r-col)))
           (.attr "cx" #(gdp-x-domain (aget %1 gdp-x-col)))
-          (.attr "cy" #(gdp-y-domain (aget %1 gdp-y-col)))
+          (.attr "cy" #(gdp-y-domain (aget %1 gdp-y-col))))
     (-> circles
         (.exit)
-        (.remove)))))
+        (.remove))))
 
 (-> js/d3
     (.csv "countries_population_GDP.csv" gdp-type-func render-gdp))
