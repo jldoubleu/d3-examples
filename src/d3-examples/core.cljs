@@ -395,6 +395,9 @@
 ; Using a log scale for the radius results in a clearer trend.
 ; it is still a little odd that the pixels in different circles
 ; count for a different number of people
+; Example 86
+; Using sqrt scale get something that looks close to pixel 
+; equality. Why? Area of circle = pi*r*r
 
 (def gdp-width  300)
 (def gdp-height 250)
@@ -413,7 +416,7 @@
                      (.scaleLog)
                      (.range #js [gdp-height 0])))
 (def gdp-r-scale (-> js/d3
-                     (.scaleLog)
+                     (.scaleSqrt)
                      (.range #js [gdp-r-min gdp-r-max])))
 
 (defn gdp-type-func
