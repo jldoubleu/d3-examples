@@ -399,12 +399,13 @@
 ; Using sqrt scale get something that looks close to pixel 
 ; equality. Why? Area of circle = pi*r*r
 
-(def gdp-width  300)
-(def gdp-height 250)
+(def gdp-margin 30)
+(def gdp-width  (- 300 gdp-margin gdp-margin))
+(def gdp-height (- 250 gdp-margin gdp-margin))
 (def gdp-x-col  "population")
 (def gdp-y-col  "gdp")
-(def gdp-r-min  1)
-(def gdp-r-max  6)
+(def gdp-r-min  0)
+(def gdp-r-max  20)
 (def gdp-r-col  "population")
 
 (def gdp-svg (create-svg! "div#ex-82"))
