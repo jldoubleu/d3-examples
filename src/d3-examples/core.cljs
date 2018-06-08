@@ -388,12 +388,17 @@
 ; Graphing data. Doesn't look great as linear scale what to do?
 ; The trend in the data is easier to see if we swap to a log
 ; scale for both x and y.
+; Example 84
+; Showing population as radius of circle scaled linearly results
+; in lots of tiny circles and a few large circles.
 
 (def gdp-width  300)
 (def gdp-height 250)
-(def gdp-radius 2)
 (def gdp-x-col  "population")
 (def gdp-y-col  "gdp")
+(def gdp-r-min  1)
+(def gdp-r-max  6)
+(def gdp-r-col  "population")
 
 (def gdp-svg (create-svg! "div#ex-82"))
 
@@ -403,6 +408,9 @@
 (def gdp-y-scale (-> js/d3
                      (.scaleLog)
                      (.range #js [gdp-height 0])))
+(def gdp-r-scale (-> js/d3
+                     (.scaleLinear)
+                     (.range #js [gdp-r-min gdp-r-max])))
 
 (defn gdp-type-func
   [datum]
@@ -418,15 +426,17 @@
                          (.domain (.extent js/d3 data #(aget %1 gdp-x-col))))
         gdp-y-domain (-> gdp-y-scale
                          (.domain (.extent js/d3 data #(aget %1 gdp-y-col))))
+        gdp-r-domain (-> gdp-r-scale
+                         (.domain (.extent js/d3 data #(aget %1 gdp-r-col))))
         circles  (-> gdp-svg
                     (.selectAll "circle")
                     (.data data))]
     (-> circles
         (.enter)
           (.append "circle")
-          (.attr "r" gdp-radius)
           (.attr "fill" "black")
         (.merge circles)
+          (.attr "r" #(gdp-r-domain (aget %1 gdp-r-col)))
           (.attr "cx" #(gdp-x-domain (aget %1 gdp-x-col)))
           (.attr "cy" #(gdp-y-domain (aget %1 gdp-y-col)))
     (-> circles
