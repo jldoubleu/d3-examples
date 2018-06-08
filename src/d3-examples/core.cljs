@@ -409,6 +409,9 @@
 (def gdp-r-col  "population")
 
 (def gdp-svg (create-svg! "div#ex-82"))
+(def gdp-g   (-> gdp-svg
+                 (.append "g")
+                 (.attr "transform" (str "translate(" gdp-margin "," gdp-margin ")"))))
 
 (def gdp-x-scale (-> js/d3
                      (.scaleLog)
@@ -436,7 +439,7 @@
                          (.domain (.extent js/d3 data #(aget %1 gdp-y-col))))
         gdp-r-domain (-> gdp-r-scale
                          (.domain (.extent js/d3 data #(aget %1 gdp-r-col))))
-        circles  (-> gdp-svg
+        circles  (-> gdp-g
                     (.selectAll "circle")
                     (.data data))]
     (-> circles
