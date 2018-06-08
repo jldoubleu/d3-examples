@@ -399,14 +399,14 @@
 ; Using sqrt scale get something that looks close to pixel 
 ; equality. Why? Area of circle = pi*r*r
 
-(def gdp-margin 30)
-(def gdp-width  (- 300 gdp-margin gdp-margin))
-(def gdp-height (- 250 gdp-margin gdp-margin))
-(def gdp-x-col  "population")
-(def gdp-y-col  "gdp")
-(def gdp-r-min  0)
-(def gdp-r-max  20)
-(def gdp-r-col  "population")
+(def gdp-margin  30)
+(def gdp-width   (- 300 gdp-margin gdp-margin))
+(def gdp-height  (- 250 gdp-margin gdp-margin))
+(def gdp-x-col   "population")
+(def gdp-y-col   "gdp")
+(def gdp-r-max   20)
+(def gdp-r-col   "population")
+(def ppl-per-pxl 1000000)
 
 (def gdp-svg (create-svg! "div#ex-82"))
 (def gdp-g   (-> gdp-svg
@@ -420,8 +420,7 @@
                      (.scaleLog)
                      (.range #js [gdp-height 0])))
 (def gdp-r-scale (-> js/d3
-                     (.scaleSqrt)
-                     (.range #js [gdp-r-min gdp-r-max])))
+                     (.scaleSqrt)))
 
 (defn gdp-type-func
   [datum]
@@ -430,6 +429,10 @@
         (update gdp-x-col js/parseFloat)
         (update gdp-y-col js/parseFloat)
         (clj->js))))
+(def PI (.-PI js/Math))
+(defn sqrt
+  [n]
+  (.sqrt js/Math n))
 
 (defn render-gdp
   [data]
@@ -439,9 +442,14 @@
                          (.domain (.extent js/d3 data #(aget %1 gdp-y-col))))
         gdp-r-domain (-> gdp-r-scale
                          (.domain (.extent js/d3 data #(aget %1 gdp-r-col))))
+        max-pop      (aget (-> gdp-r-scale (.domain)) 1)
+        gdp-r-min    0
+        gdp-r-max    (sqrt (/ max-pop (* PI ppl-per-pxl)))
         circles  (-> gdp-g
                     (.selectAll "circle")
                     (.data data))]
+    (prn "foo" gdp-r-max)
+    (.range gdp-r-scale #js [gdp-r-min gdp-r-max])
     (-> circles
         (.enter)
           (.append "circle")
