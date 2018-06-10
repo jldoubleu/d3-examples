@@ -463,3 +463,78 @@
 
 (-> js/d3
     (.csv "countries_population_GDP.csv" gdp-type-func render-gdp))
+
+; Examples 94
+; Rendering population and location
+
+(def pop-outer-width  500)
+(def pop-outer-height 250)
+(def pop-margins {:left -50 :top 0 :right -50 :bottom 0})
+
+(def pop-x-column "longitude")
+(def pop-y-column "latitude")
+(def pop-r-column "population")
+(def pop-ppl-per-pxl 100000)
+
+(def pop-inner-width  (- pop-outer-width (:left pop-margins) (:right pop-margins)))
+(def pop-inner-height (- pop-outer-height (:top pop-margins) (:bottom pop-margins)))
+
+(def pop-svg (.. js/d3
+                 (select "div#ex-94")
+                 (append "svg")
+                 (attr "width" pop-outer-width)
+                 (attr "height" pop-outer-height)))
+
+(def pop-g (.. pop-svg
+               (append "g")
+               (attr "transform" (str "translate(" (:left pop-margins) "," (:top pop-margins) ")"))))
+
+(def pop-x-scale (.. js/d3
+                     (scaleLinear)
+                     (range #js [0 pop-inner-width])))
+
+(def pop-y-scale (.. js/d3
+                     (scaleLinear)
+                     (range #js [pop-inner-height 0])))
+
+(def pop-r-scale (.. js/d3
+                     (scaleSqrt)))
+
+(defn pop-type-func
+  [datum]
+  (let [clj-datum (js->clj datum)]
+    (-> clj-datum
+        (update pop-x-column js/parseFloat)
+        (update pop-y-column js/parseFloat)
+        (update pop-r-column js/parseFloat)
+        (clj->js))))
+
+(defn pop-renderer
+  [data]
+  (let [pop-x-domain (-> pop-x-scale
+                         (.domain (.extent js/d3 data #(aget %1 pop-x-column))))
+        pop-y-domain (-> pop-y-scale
+                         (.domain (.extent js/d3 data #(aget %1 pop-y-column))))
+        pop-r-domain (-> pop-r-scale
+                         (.domain (.extent js/d3 data #(aget %1 pop-r-column))))
+        max-pop      (aget (-> pop-r-scale (.domain)) 1)
+        pop-r-min    0
+        pop-r-max    (sqrt (/ max-pop (* PI ppl-per-pxl)))
+        circles  (-> pop-g
+                    (.selectAll "circle")
+                    (.data data))]
+    (.range pop-r-scale #js [pop-r-min pop-r-max])
+    (-> circles
+        (.enter)
+          (.append "circle")
+          (.attr "fill" "black")
+        (.merge circles)
+          (.attr "r" #(pop-r-domain (aget %1 pop-r-column)))
+          (.attr "cx" #(pop-x-domain (aget %1 pop-x-column)))
+          (.attr "cy" #(pop-y-domain (aget %1 pop-y-column))))
+    (-> circles
+        (.exit)
+        (.remove))))
+
+(.. js/d3
+    (csv "geonames_cities100000.csv" pop-type-func pop-renderer))
