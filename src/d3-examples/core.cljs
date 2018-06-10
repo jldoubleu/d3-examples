@@ -516,13 +516,14 @@
         pop-y-domain (-> pop-y-scale
                          (.domain (.extent js/d3 data #(aget %1 pop-y-column))))
         pop-r-domain (-> pop-r-scale
-                         (.domain (.extent js/d3 data #(aget %1 pop-r-column))))
+                         (.domain #js [0 (.max js/d3 data #(aget %1 pop-r-column))]))
         max-pop      (aget (-> pop-r-scale (.domain)) 1)
         pop-r-min    0
-        pop-r-max    (sqrt (/ max-pop (* PI ppl-per-pxl)))
+        pop-r-max    (sqrt (/ max-pop (* PI pop-ppl-per-pxl)))
         circles  (-> pop-g
                     (.selectAll "circle")
                     (.data data))]
+(prn max-pop)
     (.range pop-r-scale #js [pop-r-min pop-r-max])
     (-> circles
         (.enter)
