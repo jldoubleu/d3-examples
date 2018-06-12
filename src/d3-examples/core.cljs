@@ -574,7 +574,7 @@
                      (scaleLinear)
                      (range #js [tmp-inner-height 0])))
 
-(def tmp-line (.. js/d3
+#_(def tmp-line (.. js/d3
                   (line)
                   (x #(tmp-x-scale (aget %1 tmp-x-column)))
                   (y #(tmp-y-scale (aget %1 tmp-y-column)))))
@@ -584,7 +584,11 @@
   (let [x-domain (-> tmp-x-scale
                      (.domain (.extent js/d3 data #(aget %1 tmp-x-column))))
         y-domain (-> tmp-y-scale
-                     (.domain (.extent js/d3 data #(aget %1 tmp-y-column))))]
+                     (.domain (.extent js/d3 data #(aget %1 tmp-y-column))))
+        tmp-line (.. js/d3
+                     (line)
+                     (x #(tmp-x-scale (aget %1 tmp-x-column)))
+                     (y #(tmp-y-scale (aget %1 tmp-y-column))))]
     (.. tmp-path
         (attr "d" (tmp-line data)))))
 
@@ -592,7 +596,7 @@
   [datum]
   (let [clj-datum (js->clj datum)]
     (-> clj-datum
-        (update tmp-x-column js/Date)
+        (update tmp-x-column #(js/Date. %1))
         (update tmp-y-column js/parseFloat)
         (clj->js))))
 
