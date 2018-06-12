@@ -539,3 +539,62 @@
 
 (.. js/d3
     (csv "geonames_cities100000.csv" pop-type-func pop-renderer))
+
+; Example 99
+; Drawing a line graph
+
+
+(def tmp-outer-width  500)
+(def tmp-outer-height 250)
+(def tmp-margins {:left 30 :top 30 :right 30 :bottom 30})
+(def tmp-inner-width  (- tmp-outer-width (:left tmp-margins) (:right tmp-margins)))
+(def tmp-inner-height (- tmp-outer-height (:top tmp-margins) (:bottom tmp-margins)))
+
+(def tmp-x-column "timestamp")
+(def tmp-y-column "temperature")
+
+(def tmp-svg (.. js/d3
+                 (select "div#ex-99")
+                 (append "svg")
+                 (attr "width" tmp-outer-width)
+                 (attr "height" tmp-outer-height)))
+
+(def tmp-g (.. tmp-svg
+               (append "g")
+               (attr "transform" (str "translate(" (:left tmp-margins) "," (:top tmp-margins) ")"))))
+
+(def tmp-path (.. tmp-g
+                  (append "path")))
+
+(def tmp-x-scale (.. js/d3
+                     (scaleTime)
+                     (range #js [0 tmp-inner-width])))
+
+(def tmp-y-scale (.. js/d3
+                     (scaleLinear)
+                     (range #js [tmp-inner-height 0])))
+
+(def tmp-line (.. js/d3
+                  (line)
+                  (x #(tmp-x-scale (aget %1 tmp-x-column)))
+                  (y #(tmp-y-scale (aget %1 tmp-y-column)))))
+
+(defn tmp-render
+  [data]
+  (let [x-domain (-> tmp-x-scale
+                     (.domain (.extent js/d3 data #(aget %1 tmp-x-column))))
+        y-domain (-> tmp-y-scale
+                     (.domain (.extent js/d3 data #(aget %1 tmp-y-column))))]
+    (.. tmp-path
+        (attr "d" (tmp-line data)))))
+
+(defn tmp-type-func
+  [datum]
+  (let [clj-datum (js->clj datum)]
+    (-> clj-datum
+        (update tmp-x-column js/Date)
+        (update tmp-y-column js/parseFloat)
+        (clj->js))))
+
+(.. js/d3
+    (csv "week_temperature_sf.csv" tmp-type-func tmp-render))
