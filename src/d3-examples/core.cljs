@@ -523,7 +523,6 @@
         circles  (-> pop-g
                     (.selectAll "circle")
                     (.data data))]
-(prn max-pop)
     (.range pop-r-scale #js [pop-r-min pop-r-max])
     (-> circles
         (.enter)
@@ -552,6 +551,8 @@
 
 (def tmp-x-column "timestamp")
 (def tmp-y-column "temperature")
+(def tmp-x-label "Time")
+(def tmp-y-label "Temperature °C")
 
 (def tmp-svg (.. js/d3
                  (select "div#ex-99")
@@ -574,7 +575,7 @@
                      (scaleLinear)
                      (range #js [tmp-inner-height 0])))
 
-#_(def tmp-line (.. js/d3
+(def tmp-line (.. js/d3
                   (line)
                   (x #(tmp-x-scale (aget %1 tmp-x-column)))
                   (y #(tmp-y-scale (aget %1 tmp-y-column)))))
@@ -584,11 +585,7 @@
   (let [x-domain (-> tmp-x-scale
                      (.domain (.extent js/d3 data #(aget %1 tmp-x-column))))
         y-domain (-> tmp-y-scale
-                     (.domain (.extent js/d3 data #(aget %1 tmp-y-column))))
-        tmp-line (.. js/d3
-                     (line)
-                     (x #(tmp-x-scale (aget %1 tmp-x-column)))
-                     (y #(tmp-y-scale (aget %1 tmp-y-column))))]
+                     (.domain (.extent js/d3 data #(aget %1 tmp-y-column))))]
     (.. tmp-path
         (attr "d" (tmp-line data)))))
 
