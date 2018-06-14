@@ -545,14 +545,17 @@
 
 (def tmp-outer-width  500)
 (def tmp-outer-height 250)
-(def tmp-margins {:left 30 :top 30 :right 30 :bottom 30})
+(def tmp-margins {:left 70 :top 5 :right 5 :bottom 60})
 (def tmp-inner-width  (- tmp-outer-width (:left tmp-margins) (:right tmp-margins)))
 (def tmp-inner-height (- tmp-outer-height (:top tmp-margins) (:bottom tmp-margins)))
 
 (def tmp-x-column "timestamp")
 (def tmp-y-column "temperature")
-(def tmp-x-label "Time")
-(def tmp-y-label "Temperature °C")
+
+(def tmp-x-label        "Time")
+(def tmp-x-label-offset 48)
+(def tmp-y-label        "Temperature °C")
+(def tmp-y-label-offset 40)
 
 (def tmp-svg (.. js/d3
                  (select "div#ex-99")
@@ -563,6 +566,29 @@
 (def tmp-g (.. tmp-svg
                (append "g")
                (attr "transform" (str "translate(" (:left tmp-margins) "," (:top tmp-margins) ")"))))
+
+(def tmp-x-g (.. tmp-g
+                 (append "g")
+                 (attr "class" "axis")
+                 (attr "transform" (str "translate(0," tmp-inner-height ")"))))
+
+(def tmp-x-text (.. tmp-x-g
+                    (append "text")
+                    (style "text-anchor" "middle")
+                    (attr "class" "label")
+                    (attr "transform" (str "translate(" (/ tmp-inner-width 2)  "," tmp-x-label-offset ")"))
+                    (text tmp-x-label)))
+
+(def tmp-y-g (.. tmp-g
+                 (append "g")
+                 (attr "class" "axis")))
+
+(def tmp-y-text (.. tmp-y-g
+                    (append "text")
+                    (style "text-anchor" "middle")
+                    (attr "class" "label")
+                    (attr "transform" (str " translate(-" tmp-y-label-offset  "," (/ tmp-inner-height 2) ") rotate(-90)"))
+                    (text tmp-y-label)))
 
 (def tmp-path (.. tmp-g
                   (append "path")))
@@ -575,6 +601,16 @@
                      (scaleLinear)
                      (range #js [tmp-inner-height 0])))
 
+(def tmp-x-axis (.. js/d3
+                    (axisBottom tmp-x-scale)
+                    (ticks 5)
+                    (tickSizeOuter 0)))
+
+(def tmp-y-axis (.. js/d3
+                    (axisLeft tmp-y-scale)
+                    (ticks 5 "s")
+                    (tickSizeOuter 0)))
+
 (def tmp-line (.. js/d3
                   (line)
                   (x #(tmp-x-scale (aget %1 tmp-x-column)))
@@ -586,6 +622,10 @@
                      (.domain (.extent js/d3 data #(aget %1 tmp-x-column))))
         y-domain (-> tmp-y-scale
                      (.domain (.extent js/d3 data #(aget %1 tmp-y-column))))]
+    (.. tmp-x-g
+        (call tmp-x-axis))
+    (.. tmp-y-g
+        (call tmp-y-axis))
     (.. tmp-path
         (attr "d" (tmp-line data)))))
 
